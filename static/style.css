@@ -1,0 +1,14 @@
+body {
+  background-color: white;
+  font-family: 'Roboto', sans-serif;
+  padding-left: 20px;
+}
+code {
+  white-space: pre;
+}
+.error {
+  color: red;
+}
+h1{
+  color: rgb(100, 0, 255)
+}
