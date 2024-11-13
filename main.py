@@ -5,14 +5,14 @@ import chevron
 
 import markdown
 
-import asyncserver
+import server as minittp
 from response import Response
 
 
-server = asyncserver.Server("", 8080)
+server = minittp.Server("", 8080)
 
 
-class StaticServe:
+class StaticServe(minittp.RequestHandler):
     def __init__(self):
         pass
 
@@ -32,7 +32,7 @@ class StaticServe:
         return res
 
 
-class StaticServeFolder:
+class StaticServeFolder(minittp.RequestHandler):
     def __init__(self, folder, url_prefix=""):
         self.folder = folder
         self.url_prefix = url_prefix
@@ -54,7 +54,7 @@ class StaticServeFolder:
             return res
 
 
-class BasicTemplateHandler:
+class BasicTemplateHandler(minittp.RequestHandler):
     def __init__(self, title, filename):
         self.title = title
         self.filename = filename
@@ -76,7 +76,7 @@ class BasicTemplateHandler:
         return res
 
 
-class TemplateFolder:
+class TemplateFolder(minittp.RequestHandler):
     def __init__(self, folder, url_prefix=""):
         self.folder = folder
         self.url_prefix = url_prefix
@@ -112,7 +112,7 @@ class TemplateFolder:
                 return None
 
 
-class MarkdownHandler:
+class MarkdownHandler(minittp.RequestHandler):
     def __init__(self, folder, url_prefix=""):
         self.folder = folder
         self.url_prefix = url_prefix
@@ -133,7 +133,7 @@ class MarkdownHandler:
                 return None
 
 
-class Counter:
+class Counter(minittp.RequestHandler):
     def __init__(self):
         self.count = 0
 

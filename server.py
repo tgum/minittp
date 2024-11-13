@@ -35,12 +35,41 @@ class RequestWrapper:
         self.writer.close()
 
 
+class RequestHandler:
+    def __init__(self):
+        pass
+
+
+class Error404(RequestHandler):
+    def handler(self, req):
+        res = Response()
+        with open("templates/404.mustache", "r") as f:
+            body = f.read()
+            res.body = chevron.render(body, {"url": req.path})
+            res.status = 404
+            res.headers["Content-Type"] = "text/html; charset=UTF-8"
+        return res
+
+
+class Error500(RequestHandler):
+    def handler(self, req, error):
+        res = Response()
+        with open("templates/500.mustache", "r") as f:
+            body = f.read()
+            res.body = chevron.render(body, {"error": error})
+            res.status = 500
+            res.headers["Content-Type"] = "text/html; charset=UTF-8"
+        return res
+
+
 class Server:
     def __init__(self, host, port):
         self.host = host
         self.port = port
 
         self.routes = []
+        self.handler_404 = Error404()
+        self.handler_500 = Error500()
 
     def register_handler(self, path, handler, full_match=True):
         print("register handler")
@@ -59,7 +88,10 @@ class Server:
         )
 
     def start(self):
-        asyncio.run(self._start())
+        try:
+            asyncio.run(self._start())
+        except KeyboardInterrupt:
+            print("\nClosing server")
 
     async def _start(self):
         server = await asyncio.start_server(self._handle_conn, self.host, self.port)
@@ -72,24 +104,6 @@ class Server:
 
     async def on_start(self):
         print("server started!")
-
-    def handler_404(self, req):
-        res = Response()
-        with open("templates/404.mustache", "r") as f:
-            body = f.read()
-            res.body = chevron.render(body, {"url": req.path})
-            res.status = 404
-            res.headers["Content-Type"] = "text/html; charset=UTF-8"
-        return res
-
-    def handler_500(self, req, error=""):
-        res = Response()
-        with open("templates/500.mustache", "r") as f:
-            body = f.read()
-            res.body = chevron.render(body, {"error": error})
-            res.status = 500
-            res.headers["Content-Type"] = "text/html; charset=UTF-8"
-        return res
 
     async def _handle_conn(self, reader, writer):
         socket = RequestWrapper(reader, writer)
@@ -111,7 +125,7 @@ class Server:
                         print("\033[41m", end="")
                         print(error_text)
                         print("\033[49m")
-                        response = self.handler_500(req, error_text)
+                        response = self.handler_500.handler(req, error_text)
                     if isinstance(response, Response):
                         break
             elif path["type"] == "redirect":
@@ -120,7 +134,7 @@ class Server:
                     print(f"-> {req.method} {replaced}")
                     req.path = replaced
         if not isinstance(response, Response):
-            response = self.handler_404(req)
+            response = self.handler_404.handler(req)
 
         response.headers["Server"] = "bascket"
         await socket.send(response.get_res_text())
