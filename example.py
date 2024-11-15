@@ -5,9 +5,10 @@ import chevron
 
 import markdown
 
-import server as minittp
-from response import Response
+import minittp
+from minittp import Response
 
+from static_handler import StaticHandler
 
 server = minittp.Server("", 8080)
 
@@ -152,10 +153,8 @@ server.register_handler(r"/.+\.md", MarkdownHandler("content"))
 server.register_handler(r"/500", "error lol")
 server.register_handler(r"/page.lol", Counter())
 
-server.register_handler(r"/static/.+", StaticServeFolder("static", "/static"))
+server.register_handler(r"/static/.+", StaticHandler("/static/", "/static/"))
 
 server.internal_redirect(r"/(.*/)?", r"/\1index.html")
-# server.register_handler(r"/frog", StaticServe())
-# server.register_handler(r"/.*", StaticServe())
 
 server.start()

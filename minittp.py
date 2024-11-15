@@ -5,8 +5,11 @@ import traceback
 
 import chevron
 
-from request import Request
-from response import Response
+import request
+import response
+
+Request = request.Request
+Response = response.Response
 
 NEWLINE = b"\r\n"
 
