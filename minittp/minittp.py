@@ -5,8 +5,8 @@ import traceback
 
 import chevron
 
-import request
-import response
+from minittp import request
+from minittp import response
 
 Request = request.Request
 Response = response.Response
