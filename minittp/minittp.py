@@ -3,8 +3,6 @@ import re
 import asyncio
 import traceback
 
-import chevron
-
 from minittp import request
 from minittp import response
 
@@ -46,22 +44,20 @@ class RequestHandler:
 class Error404(RequestHandler):
     def handler(self, req):
         res = Response()
-        with open("templates/404.mustache", "r") as f:
-            body = f.read()
-            res.body = chevron.render(body, {"url": req.path})
-            res.status = 404
-            res.headers["Content-Type"] = "text/html; charset=UTF-8"
+        res.body = (
+            f"404 NOT FOUND\nThe requested URL ({req.path}) could not be found lol"
+        )
+        res.status = 404
+        res.headers["Content-Type"] = "text/plain; charset=UTF-8"
         return res
 
 
 class Error500(RequestHandler):
     def handler(self, req, error):
         res = Response()
-        with open("templates/500.mustache", "r") as f:
-            body = f.read()
-            res.body = chevron.render(body, {"error": error})
-            res.status = 500
-            res.headers["Content-Type"] = "text/html; charset=UTF-8"
+        res.body = f"500 INTERNAL SERVER ERROR\nThe server encountered a problem while trying to render this page\nthe error is:\n{error}"
+        res.status = 500
+        res.headers["Content-Type"] = "text/plain; charset=UTF-8"
         return res
 
 
