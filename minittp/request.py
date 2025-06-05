@@ -11,15 +11,15 @@ class Request:
         self.headers = {}
         self.body = ""
         self.query = {}
-
+        
+    """
+    idk if this is the right place to put this function
+    but maybe someday ill rewrite it so im not gonna touch it
+    it basically takes a socket and reads a request
+    currently does not handle if the request has like data which is not headers
+    basically post requests
+    """
     async def read_socket(self, sock):
-        """
-        idk if this is the right place to put this function
-        but maybe someday ill rewrite it so im not gonna touch it
-        it basically takes a socket and reads a request
-        currently does not handle if the request has like data which is not headers
-        basically post requests
-        """
         buffer = b""
         state = "status"
         recieved = None  # maybe this optimisizefdes it idk

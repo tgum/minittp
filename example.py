@@ -9,6 +9,7 @@ import minittp
 from minittp import Response
 
 from static_handler import StaticHandler
+from minecraft_ping_handler import MinecraftPingHandler
 
 server = minittp.Server("", 8080)
 
@@ -148,6 +149,7 @@ class Counter(minittp.RequestHandler):
 server.register_handler(
     r"/index\.html", BasicTemplateHandler("INDEX!", "content/index.html")
 )
+server.register_handler(r"/mcping/.+(\?.*)?", MinecraftPingHandler())
 server.register_handler(r"/.+\.html", TemplateFolder("content"))
 server.register_handler(r"/.+\.md", MarkdownHandler("content"))
 server.register_handler(r"/500", "error lol")
